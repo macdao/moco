@@ -11,17 +11,17 @@ public class HttpArgsParser extends StartArgsParser {
     @Override
     protected StartArgs parseArgs(final CommandLine cmd) {
         String port = cmd.getOptionValue("p");
-        String config = cmd.getOptionValue("c");
+        String[] configs = cmd.getOptionValues("c");
         String globalSettings = cmd.getOptionValue("g");
         String shutdownPort = cmd.getOptionValue("s");
         String env = cmd.getOptionValue("e");
         boolean watchService = cmd.hasOption("watch-service");
 
-        if (config == null && globalSettings == null) {
+        if (configs == null && globalSettings == null) {
             throw new ParseArgException("config or global setting is required");
         }
 
-        if (config != null && globalSettings != null) {
+        if (configs != null && globalSettings != null) {
             throw new ParseArgException("config and global settings can not be set at the same time");
         }
 
@@ -36,7 +36,7 @@ public class HttpArgsParser extends StartArgsParser {
         return httpArgs()
                 .withPort(getPort(port))
                 .withShutdownPort(getPort(shutdownPort))
-                .withConfigurationFile(config)
+                .withConfigurationFile(configs)
                 .withSettings(globalSettings)
                 .withEnv(env)
                 .withWatchService(watchService)

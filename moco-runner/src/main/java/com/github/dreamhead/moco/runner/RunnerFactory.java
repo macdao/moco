@@ -3,12 +3,15 @@ package com.github.dreamhead.moco.runner;
 import com.github.dreamhead.moco.bootstrap.arg.StartArgs;
 import com.github.dreamhead.moco.runner.watcher.MocoRunnerWatcher;
 import com.github.dreamhead.moco.runner.watcher.MonitorFactory;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
 import java.io.File;
+import java.util.Arrays;
 
 import static com.github.dreamhead.moco.runner.FileRunner.createConfigurationFileRunner;
 import static com.github.dreamhead.moco.runner.FileRunner.createSettingFileRunner;
+import static com.google.common.collect.FluentIterable.from;
 
 public class RunnerFactory {
     private final MonitorFactory monitorFactory = new MonitorFactory();
@@ -50,13 +53,21 @@ public class RunnerFactory {
     }
 
     private Runner createDynamicConfigurationRunner(final StartArgs startArgs) {
-        final File configuration = new File(startArgs.getConfigurationFile().get());
-        final FileRunner fileRunner = createConfigurationFileRunner(configuration, startArgs);
+        final String[] configurations = startArgs.getConfigurationFiles().get();
+        final Iterable<File> files = from(Arrays.asList(configurations)).transform(new Function<String, File>() {
+            @Override
+            public File apply(String input) {
+                return new File(input);
+            }
+        });
+
+        final FileRunner fileRunner = createConfigurationFileRunner(files, startArgs);
+
         final MocoRunnerWatcher mocoRunnerWatcher;
         if (startArgs.isWatchService()) {
-            mocoRunnerWatcher = monitorFactory.createConfigurationWatcherBasedOnWatchService(configuration, fileRunner);
+            mocoRunnerWatcher = monitorFactory.createConfigurationWatcherBasedOnWatchService(files, fileRunner);
         } else {
-            mocoRunnerWatcher = monitorFactory.createConfigurationWatcher(configuration, fileRunner);
+            mocoRunnerWatcher = monitorFactory.createConfigurationWatcher(files, fileRunner);
         }
         return new MonitorRunner(fileRunner, mocoRunnerWatcher);
     }

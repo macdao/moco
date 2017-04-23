@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Collection;
-import java.util.List;
 
 import static com.sun.nio.file.SensitivityWatchEventModifier.HIGH;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
@@ -19,13 +18,13 @@ public class WatchServiceMocoRunnerWatcher implements MocoRunnerWatcher {
 
     private static final Logger logger = LoggerFactory.getLogger(WatchServiceMocoRunnerWatcher.class);
 
-    private final List<File> files;
+    private final Iterable<File> files;
     private final Function<File, Void> listener;
     private final Multimap<WatchKey, Path> keys = HashMultimap.create();
     private boolean running = false;
     private WatchService watcher;
 
-    WatchServiceMocoRunnerWatcher(List<File> files, Function<File, Void> listener) {
+    WatchServiceMocoRunnerWatcher(Iterable<File> files, Function<File, Void> listener) {
         this.files = files;
         this.listener = listener;
     }

@@ -25,12 +25,12 @@ public class MonitorFactory {
         });
     }
 
-    public FileMocoRunnerWatcher createConfigurationWatcher(final File configuration, final FileRunner fileRunner) {
-        return new FileMocoRunnerWatcher(configuration, createListener(fileRunner));
+    public MocoRunnerWatcher createConfigurationWatcher(final Iterable<File> files, final FileRunner fileRunner) {
+        return new FilesMocoRunnerWatcher(files, createListener(fileRunner));
     }
 
-    public MocoRunnerWatcher createConfigurationWatcherBasedOnWatchService(final File configuration, final FileRunner fileRunner) {
-        return new WatchServiceMocoRunnerWatcher(ImmutableList.of(configuration), createListener(fileRunner));
+    public MocoRunnerWatcher createConfigurationWatcherBasedOnWatchService(final Iterable<File> files, final FileRunner fileRunner) {
+        return new WatchServiceMocoRunnerWatcher(files, createListener(fileRunner));
     }
 
     public MocoRunnerWatcher createSettingWatcher(final File settingsFile,
